@@ -3,3 +3,4 @@ CMakeListsPrivate.txt
 cmake-build-*/ 
 test
 .idea
+src/credentials.h
