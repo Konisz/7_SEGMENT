@@ -1,6 +1,6 @@
 # 7 SEMGENT MULTIPLEX
 
-Wemos D1 based 7 segment driver using two or more shift registers.
+Wemos D1 based 7 segment driver using shift registers.
 
 
 
