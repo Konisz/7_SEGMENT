@@ -29,10 +29,10 @@ int chck_temp2;
 unsigned  millisTimer;
 unsigned rd_temp;
 unsigned rd_screen;
-
+/*
 WiFiClient client;
 int status = WL_IDLE_STATUS;
-
+*/
 //#FUNC SENDING DATA TO SHIFT REGISTERS
 void digitOutput(int d1,int d2, int d3, int d4, int d5, int d6){
     digitalWrite(latchPin,LOW);
@@ -78,7 +78,7 @@ void readTemperature(){
 }
 
 void refreshTemperatureOnDisplay(){
-    if(millisTimer - rd_screen >= 5000UL)
+    if(millisTimer - rd_screen >= 10000UL)
     {
         if((chck_temp1 != last_temp1) || (chck_temp2 != last_temp2)){
             int d1 = (last_temp1 / 10) % 10;
@@ -99,16 +99,18 @@ void setup() {
     pinMode(latchPin, OUTPUT);
     pinMode(clockPin, OUTPUT);
     pinMode(dataPin, OUTPUT);
+    /*
     while(status != WL_CONNECTED)
     {
         status = WiFi.begin(WIFI_SSID,WIFI_PASSW);
         delay(5000);
     }
     Serial.println(WiFi.localIP());
+     */
 }
 
 void loop(){
     millisTimer = millis();
-    readTemperatureDEBUG();
+    readTemperature();
     refreshTemperatureOnDisplay();
 }
