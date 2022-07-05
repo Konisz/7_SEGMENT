@@ -112,5 +112,4 @@ void setup() {
 void loop(){
     millisTimer = millis();
     readTemperature();
-    refreshTemperatureOnDisplay();SDFSDF
-}
+    refreshTemperatureOnDisplay();TERT
