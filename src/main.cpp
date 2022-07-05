@@ -112,9 +112,6 @@ void setup() {
 void loop(){
     millisTimer = millis();
     readTemperature();
-<<<<<<< HEAD
-    refreshTemperatureOnDisplay();TERT
-=======
     refreshTemperatureOnDisplay();
 }
->>>>>>> 14f27a1baae9d0836ee1e1d795810288b89c2200
+

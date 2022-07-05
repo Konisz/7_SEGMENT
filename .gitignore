@@ -2,8 +2,4 @@
 CMakeListsPrivate.txt
 cmake-build-*/ 
 test
-<<<<<<< HEAD
-=======
-.idea
->>>>>>> 14f27a1baae9d0836ee1e1d795810288b89c2200
 src/credentials.h
