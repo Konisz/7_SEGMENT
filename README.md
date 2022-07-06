@@ -1,4 +1,4 @@
-# 7 SEMGENT
+# 7 SEMGENT DRIVER
 
 Wemos D1 based 7 segment driver using shift registers.
 
