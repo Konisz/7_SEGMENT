@@ -9,30 +9,26 @@
 #define latchPin 12     // D6 -> STORAGE CLOCK INPUT
 #define dataPin 14      // D5 -> SERIAL INPUT
 #define clockPin 13     // D7 -> SR CLOCK INPUT
-#define ONE_WIRE_BUS 2 // D0 -> ONE WIRE BUS
+#define ONE_WIRE_BUS 2  // D0 -> ONE WIRE BUS
 
 //#ONEWIRE_DS_INIT
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature ds(&oneWire);
 
+//#DS SENSORS ADRESS
+uint8_t sensor0[8] = {0x28, 0x92, 0x4E, 0x45, 0x40, 0x21, 0x08, 0x1D};
+uint8_t sensor1[8] = {0x28, 0x31, 0x87, 0x62, 0x14, 0x21, 0x01, 0x46};
+
 //#DIGITS TABLE
 int digits[] = {0xC0 ,0xF9 ,0xA4 ,0xB0 ,0x99, 0x92, 0x82, 0xF8, 0x80, 0x90, 0xFF,0xBF, 0xAB};
 
 //#DATA STORAGE
-int last_temp1;
-int last_temp2;
-int chck_temp1;
-int chck_temp2;
-
-//#DELAYS
-//unsigned millisTimer;
-//unsigned refresh_time_h;
-//unsigned refresh_time = 6000UL;
+float last_temp1;
+float last_temp2;
 
 WiFiClient client;
-String apiKeyValue = "tPmAT5Ab3j7F9";
+String apiKeyValue = HTTP_POST_API_KEY;
 
-//#FUNC SENDING DATA TO SHIFT REGISTERS
 void digitOutput(int d1,int d2, int d3, int d4, int d5, int d6){
     digitalWrite(latchPin,LOW);
     shiftOut(dataPin, clockPin, MSBFIRST, digits[d5]);
@@ -44,46 +40,22 @@ void digitOutput(int d1,int d2, int d3, int d4, int d5, int d6){
     digitalWrite(latchPin,HIGH);
 }
 
-void readTemperatureDEBUG(){
-        Serial.print("# Requesting temperatures...");
-        ds.requestTemperatures();
-        Serial.println("DONE");
-        Serial.print("# Reading from sensor #0: ");
-        Serial.println(ds.getTempCByIndex(0));
-        last_temp1 = ds.getTempCByIndex(0);
-        Serial.print("# Reading from sensor #1: ");
-        Serial.println(ds.getTempCByIndex(1));
-        last_temp2 = ds.getTempCByIndex(1);
-        Serial.println("#==================");
-        Serial.print("# Reading from sensor #0 (variable): ");
-        Serial.println(last_temp1);
-        Serial.print("# Reading from sensor #1 (variable): ");
-        Serial.println(last_temp2);
-        Serial.println("###################");
-}
-
 void readTemperature(){
 
         ds.requestTemperatures();
-        if(ds.getTempCByIndex(0) > 10 && ds.getTempCByIndex(0) < 40)
+        if(ds.getTempC(sensor0) > 10 && ds.getTempC(sensor0) < 40)
         last_temp1 = ds.getTempCByIndex(0);
-        if(ds.getTempCByIndex(1) > 10 && ds.getTempCByIndex(1) < 40)
+        if(ds.getTempC(sensor1) > 10 && ds.getTempC(sensor1) < 40)
         last_temp2 = ds.getTempCByIndex(1);
 
 }
 
 void refreshTemperatureOnDisplay(){
-
-        if((chck_temp1 != last_temp1) || (chck_temp2 != last_temp2)){
-            int d1 = (last_temp1 / 10) % 10;
-            int d2 = last_temp1 % 10;
-            int d3 = (last_temp2 / 10) % 10;
-            int d4 = last_temp2 % 10;
-            digitOutput(d1,d2,d3,d4,10,10); //Digit 5 & 6 is disabled
-            chck_temp1 = last_temp1;
-            chck_temp2 = last_temp2;
-        }
-
+            int d1 = ((int)last_temp1 / 10) % 10;
+            int d2 = (int)last_temp1 % 10;
+            int d3 = ((int)last_temp2 / 10) % 10;
+            int d4 = (int)last_temp2 % 10;
+            digitOutput(d1,d2,d3,d4,10,10);
 }
 
 void sendDataToDatabase(){
@@ -110,11 +82,10 @@ void sendDataToDatabase(){
     else {
     Serial.println("WiFi Disconnected");
     }
-
 }
 
 void setup() {
-    //Serial.begin(115200);
+    Serial.begin(9600);
     ds.begin();
     pinMode(latchPin, OUTPUT);
     pinMode(clockPin, OUTPUT);
@@ -128,17 +99,13 @@ void setup() {
         delay(500);
     }
     Serial.println(WiFi.localIP());
-     
 }
 
+
 void loop(){
-    //millisTimer = millis();
-    //if(millisTimer - refresh_time_h >= refresh_time){
     readTemperature();
     refreshTemperatureOnDisplay();
     sendDataToDatabase();
-    delay(10000);
-    //}
-    //refresh_time_h = millisTimer;
+    delay(60000);
 }
 
